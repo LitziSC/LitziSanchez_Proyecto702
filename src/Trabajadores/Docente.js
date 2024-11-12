@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Bar } from 'react-chartjs-2';
+import { Pie } from 'react-chartjs-2';
 import 'chart.js/auto'; // Importar esto para evitar problemas con chart.js
 import '../App.css';
 
@@ -8,16 +8,22 @@ const ListaDocentes = () => {
 
     // Función para obtener los docentes
     const obtenerDocentes = async () => {
-        const response = await fetch('https://alex.starcode.com.mx/apiBD.php');
-        const data = await response.json();
-        setDocentes(data);
+        try {
+            const response = await fetch('https://alex.starcode.com.mx/apiBD.php');
+            const data = await response.json();
+            setDocentes(data);
+        } catch (error) {
+            console.error("Error al obtener los docentes:", error);
+        }
     };
 
     useEffect(() => {
-        // Llamar a la función obtenerDocentes cada 5 segundos (5000 ms)
+        obtenerDocentes(); // Llamar una vez al cargar el componente
+
+        // Actualizar cada 5 segundos (5000 ms)
         const intervalId = setInterval(() => {
             obtenerDocentes();
-        }, 2000);
+        }, 5000);
 
         // Limpiar el intervalo cuando el componente se desmonte
         return () => clearInterval(intervalId);
@@ -47,9 +53,9 @@ const ListaDocentes = () => {
             {
                 label: 'Número de Docentes por Sexo',
                 data: [conteoSexo.Masculino, conteoSexo.Femenino],
-                backgroundColor: ['rgba(75,192,192,1)', 'rgba(255,99,132,1)'],
-                borderColor: 'rgba(0,0,0,1)',
-                borderWidth: 2
+                backgroundColor: ['rgba(75, 192, 192, 1)', 'rgba(255, 99, 132, 1)'],
+                borderColor: 'rgba(0, 0, 0, 1)',
+                borderWidth: 1
             }
         ]
     };
@@ -64,7 +70,7 @@ const ListaDocentes = () => {
                     <tr style={{ backgroundColor: '#f2f2f2' }}>
                         <th style={{ padding: '10px', border: '1px solid #ddd' }}>ID</th>
                         <th style={{ padding: '10px', border: '1px solid #ddd' }}>Nombre</th>
-                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Telefono</th>
+                        <th style={{ padding: '10px', border: '1px solid #ddd' }}>Teléfono</th>
                         <th style={{ padding: '10px', border: '1px solid #ddd' }}>Sexo</th>
                     </tr>
                 </thead>
@@ -83,7 +89,7 @@ const ListaDocentes = () => {
             {/* Gráfica de sexo */}
             <div style={{ width: '600px', margin: '50px auto' }}>
                 <h2>Gráfica de Sexo de los Docentes</h2>
-                <Bar data={dataSexo} />
+                <Pie data={dataSexo} />
             </div>
         </div>
     );
